@@ -9,6 +9,14 @@ class App:
 
         self.root = Tk()
         self.root['bg'] = 'white'
+
+        w, h = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
+        self.root.overrideredirect(1)
+        self.root.geometry("%dx%d+0+0" % (w, h))
+
+        self.root.focus_set() # <-- move focus to this widget
+        self.root.bind("<Escape>", lambda e: e.widget.quit())
+
         frame = Frame(self.root)
         frame.pack()
         frame['bg']= 'white'

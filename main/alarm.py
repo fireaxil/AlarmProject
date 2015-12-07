@@ -2,12 +2,9 @@ from tkinter import *
 from time import strftime
 from time import sleep
 from functools import partial
-
 from builtins import print
-
-
+import pyglet
 class App:
-
     def __init__(self):
 
         self.root = Tk()
@@ -24,31 +21,45 @@ class App:
         frame.pack()
         frame['bg']= 'white'
 
-        self.timeText = Label(self.root, text= strftime("%H:%M:%S"), font=("Helvetica", 30), bg='white')
+        self.timeText = Label(self.root, text= strftime("%H:%M:%S"), font=("Helvetica", 40), bg='white')
         self.timeText.pack(side = TOP)
 
         self.setAlarm = Button(frame, text= "Set Alarm", command=self.callback,  bg='white')
         self.setAlarm.pack(side= LEFT)
 
-        self.alarmTime = Label(self.root, text="", font=("Helvetica", 30), bg='white')
+        self.alarmTime = Label(self.root, text="", font=("Helvetica", 40), bg='white')
 
         self.alarm1 = ""
         self.alarm1Time = -1
+
+        self.currentTime = 0
+
+        self.music = pyglet.resource.media('BlankSpace.wma')
+        self.isMusicPlaying = 0
 
         self.root.after(1000, self.update_time)
         self.root.mainloop()
 
     def update_time(self):
         now =  strftime("%H:%M:%S")
+        self.currentTime = int(strftime("%H%M"))
+        # print(self.currentTime)
         self.timeText.configure(text=now)
         self.root.after(1000, self.update_time)
+        self.checkAlarmTime()
+
+    def checkAlarmTime(self):
+        if(self.currentTime == self.alarm1Time):
+            if self.isMusicPlaying == 0:
+                self.music.play()
+                self.isMusicPlaying = 1
+            print("ALARMTIMEEEEEEEEE!")
 
     def callback(self):
         self.timeText.pack_forget()
         self.setAlarm.pack_forget()
         self.alarmTime.pack()
         self.addKeyboard()
-        print("Helllo world!!")
 
     def addKeyboard(self):
         lf = LabelFrame(self.root, text="Enter Alarm Time", bd=3,  bg='white')
@@ -125,10 +136,9 @@ class App:
         if(len(self.alarm1) != 4 and len(self.alarm1) != 5):
             self.alarm1 = ""
             self.alarmTime.configure(text=self.alarm1)
-            print("Invalid tme listed")
+            print("Invalid time listed")
         else:
             self.alarm1Time = int(self.alarm1.split()[0])
-            print(self.alarm1Time)
 
 
 app = App()

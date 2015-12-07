@@ -145,7 +145,7 @@ class App:
             print("Invalid time listed")
         else:
             self.alarm1Time = int(self.alarm1.split()[0])
-            self.nextAlarm = "Next Alarm" + str(self.alarmTime)
+            self.nextAlarm = "Next Alarm: " +str(self.alarm1Time)
             self.nextAlarmLabel.configure(text=self.nextAlarm)
             self.lf.pack_forget()
             self.alarmTime.pack_forget()

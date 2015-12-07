@@ -3,6 +3,9 @@ from time import strftime
 from time import sleep
 from functools import partial
 
+from builtins import print
+
+
 class App:
 
     def __init__(self):
@@ -30,6 +33,7 @@ class App:
         self.alarmTime = Label(self.root, text="", font=("Helvetica", 30), bg='white')
 
         self.alarm1 = ""
+        self.alarm1Time = -1
 
         self.root.after(1000, self.update_time)
         self.root.mainloop()
@@ -90,8 +94,42 @@ class App:
         elif btn in [':']:
             self.alarm1+=':'
             self.alarmTime.configure(text=self.alarm1)
-        print(btn)
-        # root.title(s)
+        elif btn in ['3']:
+            self.alarm1+='3'
+            self.alarmTime.configure(text=self.alarm1)
+        elif btn in ['4']:
+            self.alarm1+='4'
+            self.alarmTime.configure(text=self.alarm1)
+        elif btn in ['5']:
+            self.alarm1+='5'
+            self.alarmTime.configure(text=self.alarm1)
+        elif btn in ['6']:
+            self.alarm1+='6'
+            self.alarmTime.configure(text=self.alarm1)
+        elif btn in ['7']:
+            self.alarm1+='7'
+            self.alarmTime.configure(text=self.alarm1)
+        elif btn in ['8']:
+            self.alarm1+='8'
+            self.alarmTime.configure(text=self.alarm1)
+        elif btn in ['9']:
+            self.alarm1+='9'
+            self.alarmTime.configure(text=self.alarm1)
+        elif btn in ['0']:
+            self.alarm1+='0'
+            self.alarmTime.configure(text=self.alarm1)
+        elif btn in ['Enter']:
+            self.checkAlarm()
+
+    def checkAlarm(self):
+        if(len(self.alarm1) != 4 and len(self.alarm1) != 5):
+            self.alarm1 = ""
+            self.alarmTime.configure(text=self.alarm1)
+            print("Invalid tme listed")
+        else:
+            self.alarm1Time = int(self.alarm1.split()[0])
+            print(self.alarm1Time)
+
 
 app = App()
 

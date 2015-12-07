@@ -21,11 +21,16 @@ class App:
         frame.pack()
         frame['bg']= 'white'
 
+        self.nextAlarm = "Next Alarm: Not Set"
+
         self.timeText = Label(self.root, text= strftime("%H:%M:%S"), font=("Helvetica", 40), bg='white')
         self.timeText.pack(side = TOP)
 
         self.setAlarm = Button(frame, text= "Set Alarm", command=self.callback,  bg='white')
         self.setAlarm.pack(side= LEFT)
+
+        self.nextAlarmLabel = Label(self.root, text= self.nextAlarm, font=("Helvetica", 40), bg='white')
+        self.nextAlarmLabel.pack()
 
         self.alarmTime = Label(self.root, text="", font=("Helvetica", 40), bg='white')
 
@@ -58,12 +63,13 @@ class App:
     def callback(self):
         self.timeText.pack_forget()
         self.setAlarm.pack_forget()
+        self.nextAlarmLabel.pack_forget()
         self.alarmTime.pack()
         self.addKeyboard()
 
     def addKeyboard(self):
-        lf = LabelFrame(self.root, text="Enter Alarm Time", bd=3,  bg='white')
-        lf.pack(padx=15, pady=10)
+        self.lf = LabelFrame(self.root, text="Enter Alarm Time", bd=3,  bg='white')
+        self.lf.pack(padx=15, pady=10)
         # typical calculator button layout
         btn_list = [
         '7',  '8',  '9',
@@ -81,7 +87,7 @@ class App:
             # partial takes care of function and argument
             cmd = partial(self.click, label)
             # create the button
-            btn[n] = Button(lf, text=label, width=5, command=cmd,  bg='white')
+            btn[n] = Button(self.lf, text=label, width=5, command=cmd,  bg='white')
             # position the button
             btn[n].grid(row=r, column=c)
             # increment button index
@@ -139,6 +145,13 @@ class App:
             print("Invalid time listed")
         else:
             self.alarm1Time = int(self.alarm1.split()[0])
+            self.nextAlarm = "Next Alarm" + str(self.alarmTime)
+            self.nextAlarmLabel.configure(text=self.nextAlarm)
+            self.lf.pack_forget()
+            self.alarmTime.pack_forget()
+            self.timeText.pack()
+            self.setAlarm.pack()
+            self.nextAlarmLabel.pack()
 
 
 app = App()

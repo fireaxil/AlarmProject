@@ -4,6 +4,7 @@ from time import sleep
 from functools import partial
 from builtins import print
 import pyglet
+import pywapi
 class App:
     def __init__(self):
 
@@ -42,6 +43,13 @@ class App:
         self.music = pyglet.resource.media('BlankSpace.wma')
         self.isMusicPlaying = 0
 
+        self.currentWeather  = Label(self.root, text=self.getWeather(),font=("Helvetica", 10), bg='white' )
+        self.currentWeather.pack()
+
+        self.snoozeButton = Button(self.root, text="SNOOZE",font=("Helvetica", 10), bg='white', command=self.snooze)
+
+        self.offButton = Button(self.root, text= "TURN OFF", font=("Helvetica", 10), bg='white', command=self.turnOff)
+
         self.root.after(1000, self.update_time)
         self.root.mainloop()
 
@@ -58,12 +66,25 @@ class App:
             if self.isMusicPlaying == 0:
                 self.music.play()
                 self.isMusicPlaying = 1
+            self.snoozeButton.pack(side= LEFT)
+            self.offButton.pack(side=RIGHT)
             print("ALARMTIMEEEEEEEEE!")
+            self.setAlarmPack()
+
+
+    def getWeather(self):
+        city="Buffalo"
+        lookup = pywapi.get_location_ids(city)
+
+        for i in lookup:
+            location_id = i
+        weather_com_result = pywapi.get_weather_from_weather_com(location_id, units="imperial")
+        return "Currently the weather is " + weather_com_result['current_conditions']['text'].lower() + " and " + weather_com_result['current_conditions']['temperature'] + "°F in " + city + "."
+
+
 
     def callback(self):
-        self.timeText.pack_forget()
-        self.setAlarm.pack_forget()
-        self.nextAlarmLabel.pack_forget()
+        self.setAlarmPack()
         self.alarmTime.pack()
         self.addKeyboard()
 
@@ -147,12 +168,32 @@ class App:
             self.alarm1Time = int(self.alarm1.split()[0])
             self.nextAlarm = "Next Alarm: " +str(self.alarm1Time)
             self.nextAlarmLabel.configure(text=self.nextAlarm)
-            self.lf.pack_forget()
-            self.alarmTime.pack_forget()
-            self.timeText.pack()
-            self.setAlarm.pack()
-            self.nextAlarmLabel.pack()
+            self.timePack()
 
+    def snooze(self):
+        self.alarm1Time+=10
+        self.timePack()
+        self.isMusicPlaying = 0
+        self.music.seek(0)
+
+    def turnOff(self):
+        self.isMusicPlaying = 0
+        self.timePack()
+        self.music.seek(0)
+
+    def setAlarmPack(self):
+        self.timeText.pack_forget()
+        self.setAlarm.pack_forget()
+        self.nextAlarmLabel.pack_forget()
+        self.currentWeather.pack_forget()
+
+    def timePack(self):
+        self.lf.pack_forget()
+        self.alarmTime.pack_forget()
+        self.timeText.pack()
+        self.setAlarm.pack()
+        self.nextAlarmLabel.pack()
+        self.currentWeather.pack()
 
 app = App()
 

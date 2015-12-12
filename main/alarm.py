@@ -1,10 +1,11 @@
 from tkinter import *
-from time import strftime
+from time import strftime, strptime
 from time import sleep
 from functools import partial
 from builtins import print
 import pyglet
 import pywapi
+from datetime import datetime, timedelta
 class App:
     def __init__(self):
 
@@ -24,7 +25,8 @@ class App:
 
         self.nextAlarm = "Next Alarm: Not Set"
 
-        self.timeText = Label(self.root, text= strftime("%H:%M:%S"), font=("Helvetica", 40), bg='white')
+        now = datetime.now()
+        self.timeText = Label(self.root, text= '{:%H:%M:%S}'.format(now), font=("Helvetica", 40), bg='white')
         self.timeText.pack(side = TOP)
 
         self.setAlarm = Button(frame, text= "Set Alarm", command=self.callback,  bg='white')
@@ -36,11 +38,13 @@ class App:
         self.alarmTime = Label(self.root, text="", font=("Helvetica", 40), bg='white')
 
         self.alarm1 = ""
-        self.alarm1Time = -1
+        self.alarm1Time = ""
 
         self.currentTime = 0
 
-        self.music = pyglet.resource.media('BlankSpace.wma')
+        self.player = pyglet.media.Player()
+        self.music = pyglet.media.load('BlankSpace.wma')  #pyglet.resource.media('BlankSpace.wma')
+        self.player.queue(self.music)
         self.isMusicPlaying = 0
 
         self.currentWeather  = Label(self.root, text=self.getWeather(),font=("Helvetica", 10), bg='white' )
@@ -54,22 +58,23 @@ class App:
         self.root.mainloop()
 
     def update_time(self):
-        now =  strftime("%H:%M:%S")
-        self.currentTime = int(strftime("%H%M"))
-        # print(self.currentTime)
-        self.timeText.configure(text=now)
+        now = datetime.now()
+        self.currentTime = '{:%H:%M}'.format(now)
+        self.timeText.configure(text='{:%H:%M:%S}'.format(now))
         self.root.after(1000, self.update_time)
         self.checkAlarmTime()
 
     def checkAlarmTime(self):
-        if(self.currentTime == self.alarm1Time):
+        print (str(self.currentTime))
+        print(str(self.alarm1Time))
+        if str(self.currentTime) == str(self.alarm1Time):
             if self.isMusicPlaying == 0:
-                self.music.play()
+                self.player.play()
                 self.isMusicPlaying = 1
             self.snoozeButton.pack(side= LEFT)
             self.offButton.pack(side=RIGHT)
-            print("ALARMTIMEEEEEEEEE!")
             self.setAlarmPack()
+            self.timeText.pack()
 
 
     def getWeather(self):
@@ -96,7 +101,7 @@ class App:
         '7',  '8',  '9',
         '4',  '5',  '6',
         '1',  '2',  '3',
-        '0',  ':',  'Enter']
+        '0',  '<-',  'Enter']
         # create and position all buttons with a for-loop
         # r, c used for row, column grid values
         r = 1
@@ -129,8 +134,9 @@ class App:
         elif btn in ['2']:
             self.alarm1+='2'
             self.alarmTime.configure(text=self.alarm1)
-        elif btn in [':']:
-            self.alarm1+=':'
+        elif btn in ['<-']:
+            self.alarm1 = self.alarm1[:-1]
+            # self.alarm1+=':'
             self.alarmTime.configure(text=self.alarm1)
         elif btn in ['3']:
             self.alarm1+='3'
@@ -165,28 +171,38 @@ class App:
             self.alarmTime.configure(text=self.alarm1)
             print("Invalid time listed")
         else:
-            self.alarm1Time = int(self.alarm1.split()[0])
+            # self.alarm1Time = int(self.alarm1.split()[0])
+            self.alarm1Time = datetime.strptime(self.alarm1, '%H%M')
+            self.alarm1Time = '{:%H:%M}'.format(self.alarm1Time)
             self.nextAlarm = "Next Alarm: " +str(self.alarm1Time)
             self.nextAlarmLabel.configure(text=self.nextAlarm)
             self.timePack()
 
     def snooze(self):
-        self.alarm1Time+=10
+        timePlusTen = datetime.now() + timedelta(minutes=10)
+        self.alarm1Time = '{:%H:%M}'.format(timePlusTen)
+        self.nextAlarmLabel.configure(text= "Snoozing until: " + self.alarm1Time)
         self.timePack()
         self.isMusicPlaying = 0
-        self.music.seek(0)
+        self.player.seek(0)
+        self.player.pause()
+        self.snoozeButton.pack_forget()
+        self.offButton.pack_forget()
 
     def turnOff(self):
         self.isMusicPlaying = 0
         self.timePack()
-        self.music.seek(0)
-
+        self.player.seek(0)
+        self.player.pause()
+        self.snoozeButton.pack_forget()
+        self.offButton.pack_forget()
+    # removes the main widgets
     def setAlarmPack(self):
         self.timeText.pack_forget()
         self.setAlarm.pack_forget()
         self.nextAlarmLabel.pack_forget()
         self.currentWeather.pack_forget()
-
+    # removes the keyboard label and widgets
     def timePack(self):
         self.lf.pack_forget()
         self.alarmTime.pack_forget()

@@ -6,13 +6,16 @@ from builtins import print
 import pyglet
 import pywapi
 from datetime import datetime, timedelta
+from PIL import  Image, ImageTk
 # pyglet.lib.load_library('avbin')
 # pyglet.have_avbin =True
 
 
+#
 # things to fix:
 #     add 24 hours to alarm when turn off is clicked
 #     update button if snooze is clicked and then off is clicked
+#
 
 class App:
     def __init__(self):
@@ -47,6 +50,7 @@ class App:
 
         self.alarm1 = ""
         self.alarm1Time = ""
+        self.alarm1ActualTime = datetime.now()
 
         self.currentTime = 0
 
@@ -202,6 +206,10 @@ class App:
         self.player.pause()
         self.snoozeButton.pack_forget()
         self.offButton.pack_forget()
+        self.nextAlarm = "Next Alarm: Not Set"
+        self.alarm1Time = ""
+        self.nextAlarmLabel.configure(text=self.nextAlarm)
+        print(self.alarm1Time)
     # removes the main widgets
     def setAlarmPack(self):
         self.timeText.pack_forget()

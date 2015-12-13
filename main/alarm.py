@@ -5,10 +5,15 @@ from functools import partial
 from builtins import print
 import pyglet
 import pywapi
-
 from datetime import datetime, timedelta
 # pyglet.lib.load_library('avbin')
 # pyglet.have_avbin =True
+
+
+# things to fix:
+#     add 24 hours to alarm when turn off is clicked
+#     update button if snooze is clicked and then off is clicked
+
 class App:
     def __init__(self):
 

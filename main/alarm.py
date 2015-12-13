@@ -5,7 +5,10 @@ from functools import partial
 from builtins import print
 import pyglet
 import pywapi
+
 from datetime import datetime, timedelta
+# pyglet.lib.load_library('avbin')
+# pyglet.have_avbin =True
 class App:
     def __init__(self):
 
@@ -65,8 +68,6 @@ class App:
         self.checkAlarmTime()
 
     def checkAlarmTime(self):
-        print (str(self.currentTime))
-        print(str(self.alarm1Time))
         if str(self.currentTime) == str(self.alarm1Time):
             if self.isMusicPlaying == 0:
                 self.player.play()

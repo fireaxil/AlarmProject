@@ -7,6 +7,7 @@ import pyglet
 import pywapi
 from datetime import datetime, timedelta
 from PIL import  Image, ImageTk
+
 # pyglet.lib.load_library('avbin')
 # pyglet.have_avbin =True
 
@@ -40,8 +41,6 @@ class App:
         self.timeText = Label(self.root, text= '{:%H:%M:%S}'.format(now), font=("Helvetica", 40), bg='white')
         self.timeText.pack(side = TOP)
 
-        self.setAlarm = Button(frame, text= "Set Alarm", command=self.callback,  bg='white')
-        self.setAlarm.pack(side= LEFT)
 
         self.nextAlarmLabel = Label(self.root, text= self.nextAlarm, font=("Helvetica", 40), bg='white')
         self.nextAlarmLabel.pack()
@@ -55,16 +54,27 @@ class App:
         self.currentTime = 0
 
         self.player = pyglet.media.Player()
-        self.music = pyglet.media.load('BlankSpace.wma')  #pyglet.resource.media('BlankSpace.wma')
+        self.music = pyglet.media.load('BlankSpace.wav')  #pyglet.resource.media('BlankSpace.wma')
         self.player.queue(self.music)
         self.isMusicPlaying = 0
 
         self.currentWeather  = Label(self.root, text=self.getWeather(),font=("Helvetica", 10), bg='white' )
         self.currentWeather.pack()
 
+        self.setAlarm = Button(self.root, text= "Set Alarm", command=self.callback,  bg='white')
+        self.setAlarm.pack(pady=20)
+
         self.snoozeButton = Button(self.root, text="SNOOZE",font=("Helvetica", 10), bg='white', command=self.snooze)
 
         self.offButton = Button(self.root, text= "TURN OFF", font=("Helvetica", 10), bg='white', command=self.turnOff)
+
+        canvas = Canvas(self.root, width=500, height=500)
+        canvas.pack()
+        img = Image.open("clear.png").resize((400,400), Image.ANTIALIAS)
+        img.show()
+        tk_img = ImageTk.PhotoImage(img)
+        canvas.create_image(250, 250, image=tk_img)
+
 
         self.root.after(1000, self.update_time)
         self.root.mainloop()
@@ -221,9 +231,10 @@ class App:
         self.lf.pack_forget()
         self.alarmTime.pack_forget()
         self.timeText.pack()
-        self.setAlarm.pack()
         self.nextAlarmLabel.pack()
         self.currentWeather.pack()
+        self.setAlarm.pack(pady=20)
+
 
 app = App()
 

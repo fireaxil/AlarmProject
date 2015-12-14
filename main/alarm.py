@@ -7,7 +7,7 @@ import pyglet
 import pywapi
 from datetime import datetime, timedelta
 from PIL import  Image, ImageTk
-
+import pygame
 # pyglet.lib.load_library('avbin')
 # pyglet.have_avbin =True
 
@@ -53,9 +53,11 @@ class App:
 
         self.currentTime = 0
 
-        self.player = pyglet.media.Player()
-        self.music = pyglet.media.load('BlankSpace.wav')  #pyglet.resource.media('BlankSpace.wma')
-        self.player.queue(self.music)
+        # self.player = pyglet.media.Player()
+        # self.music = pyglet.media.load('BlankSpace.wav')  #pyglet.resource.media('BlankSpace.wma')
+        # self.player.queue(self.music)
+        pygame.mixer.init()
+        pygame.mixer.music.load('BlankSpace.ogg')
         self.isMusicPlaying = 0
 
         self.canvas = Canvas(self.root, width=100, height=100)
@@ -98,7 +100,8 @@ class App:
     def checkAlarmTime(self):
         if str(self.currentTime) == str(self.alarm1Time):
             if self.isMusicPlaying == 0:
-                self.player.play()
+                # self.player.play()
+                pygame.mixer.music.play()
                 self.isMusicPlaying = 1
             self.snoozeButton.pack(side= LEFT)
             self.offButton.pack(side=RIGHT)
@@ -224,12 +227,16 @@ class App:
         self.nextAlarmLabel.configure(text= "Snoozing until: " + self.alarm1Time)
         self.timePack()
         self.isMusicPlaying = 0
+        pygame.mixer.music.rewind()
+        pygame.mixer.music.stop()
         self.player.seek(0)
         self.player.pause()
         self.snoozeButton.pack_forget()
         self.offButton.pack_forget()
 
     def turnOff(self):
+        pygame.mixer.music.rewind()
+        pygame.mixer.music.stop()
         self.isMusicPlaying = 0
         self.timePack()
         self.player.seek(0)
@@ -246,6 +253,7 @@ class App:
         self.setAlarm.pack_forget()
         self.nextAlarmLabel.pack_forget()
         self.currentWeather.pack_forget()
+        self.canvas.pack_forget()
     # removes the keyboard label and widgets
     def timePack(self):
         self.lf.pack_forget()
@@ -254,6 +262,7 @@ class App:
         self.nextAlarmLabel.pack()
         self.currentWeather.pack()
         self.setAlarm.pack(pady=20)
+        self.canvas.pack()
 
 
 app = App()

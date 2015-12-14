@@ -58,8 +58,25 @@ class App:
         self.player.queue(self.music)
         self.isMusicPlaying = 0
 
-        self.currentWeather  = Label(self.root, text=self.getWeather(),font=("Helvetica", 10), bg='white' )
+        self.canvas = Canvas(self.root, width=100, height=100)
+
+        self.my_images = []
+        self.my_images.append(Image.open("res/clear.jpg").resize((110,110), Image.ANTIALIAS))
+        self.my_images.append(Image.open("res/cloudy.jpg").resize((110,110), Image.ANTIALIAS))
+        self.my_images.append(Image.open("res/drizzle.jpg").resize((110,110), Image.ANTIALIAS))
+        self.my_images.append(Image.open("res/snow_showers.jpg").resize((110,110), Image.ANTIALIAS))
+
+        # img = Image.open("res/clear.jpg").resize((100,100), Image.ANTIALIAS)
+        # img1 = Image.open("res/cloudy.jpg").resize((100,100), Image.ANTIALIAS)
+        self.clear = ImageTk.PhotoImage(self.my_images[0])
+        self.cloudy = ImageTk.PhotoImage(self.my_images[1])
+        self.rain = ImageTk.PhotoImage(self.my_images[2])
+        self.snow = ImageTk.PhotoImage(self.my_images[3])
+        # self.image_on_canvas = self.canvas.create_image(50, 50, image=tk_img)
+
+        self.currentWeather = Label(self.root, text=self.getWeather(),font=("Helvetica", 10), bg='white' )
         self.currentWeather.pack()
+        self.canvas.pack()
 
         self.setAlarm = Button(self.root, text= "Set Alarm", command=self.callback,  bg='white')
         self.setAlarm.pack(pady=20)
@@ -67,14 +84,6 @@ class App:
         self.snoozeButton = Button(self.root, text="SNOOZE",font=("Helvetica", 10), bg='white', command=self.snooze)
 
         self.offButton = Button(self.root, text= "TURN OFF", font=("Helvetica", 10), bg='white', command=self.turnOff)
-
-        canvas = Canvas(self.root, width=500, height=500)
-        canvas.pack()
-        img = Image.open("clear.png").resize((400,400), Image.ANTIALIAS)
-        img.show()
-        tk_img = ImageTk.PhotoImage(img)
-        canvas.create_image(250, 250, image=tk_img)
-
 
         self.root.after(1000, self.update_time)
         self.root.mainloop()
@@ -104,8 +113,19 @@ class App:
         for i in lookup:
             location_id = i
         weather_com_result = pywapi.get_weather_from_weather_com(location_id, units="imperial")
-        return "Currently the weather is " + weather_com_result['current_conditions']['text'].lower() + " and " + weather_com_result['current_conditions']['temperature'] + "°F in " + city + "."
+        current_conditions = weather_com_result['current_conditions']['text'].lower()
+        if "cloudy" in current_conditions:
+            self.canvas.create_image(50, 50, image=self.cloudy)
+        elif "rain" in current_conditions :
+            self.canvas.create_image(50, 50, image=self.rain)
+        elif "clear" in current_conditions :
+            self.canvas.create_image(50, 50, image=self.clear)
+        elif "snow" in current_conditions :
+            self.canvas.create_image(50, 50, image=self.snow)
+        else:
+            self.canvas.create_image(50, 50, image=self.clear)
 
+        return "Currently the weather is " + weather_com_result['current_conditions']['text'].lower() + " and " + weather_com_result['current_conditions']['temperature'] + "°F in " + city + "."
 
 
     def callback(self):
